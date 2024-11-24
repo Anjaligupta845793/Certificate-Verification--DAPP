@@ -1,27 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-// This is considered an Exogenous, Decentralized, Anchored (pegged), Crypto Collateralized low volitility coin
 
-// Layout of Contract:
-// version
-// imports
-// interfaces, libraries, contracts
-// errors
-// Type declarations
-// State variables
-// Events
-// Modifiers
-// Functions
-
-// Layout of Functions:
-// constructor
-// receive function (if exists)
-// fallback function (if exists)
-// external
-// public
-// internal
-// private
-// view & pure functions
 
 pragma solidity ^0.8.27;
 
@@ -40,43 +19,46 @@ struct Certificate {
 }
 
 
-
-mapping(bytes32 => Certificate) private Certificates;
-address private owner;
-
-////////////////////EVENTS/////////////////////
-event certificateIssued(string strudentname, string course, uint dateissued);
-////////////////////EVENTS/////////////////////
+mapping(bytes32 => Certificate) public Certificates;
+address public owner;
+bytes32[] public certificateId;
 
 
-////////////////////MODIFIERS/////////////////////
+event certificateIssued(string strudentname, string course,bytes32 certificateId, uint dateissued);
 
 modifier onlyOwner() {
-    require(msg.sender == owner, "only owner can call this function ");
+    require(msg.sender == owner, "only owner can call this function");
     _;
 }
-////////////////////MODIFIERS/////////////////////
-
-////////////////////FUNCTIONS/////////////////////
 
 constructor(){
    owner = msg.sender;
 }
-////////////////////FUNCTIONS/////////////////////
 
 
-
-
-function issueCertificate(string memory studentname, string memory course , uint dateIssued  ) external onlyOwner() {
-     bytes32   certificateId = _generateCertificateId(studentname, course );
-     Certificates[certificateId] = Certificate(studentname, course ,dateIssued,certificateId, true);
-     emit certificateIssued(studentname, course, dateIssued);
+function issueCertificate(string memory studentname, string memory course , uint dateIssued  ) external onlyOwner()  {
+     bytes32   certificateid = _generateCertificateId(studentname, course );
+     Certificates[certificateid] = Certificate(studentname, course ,dateIssued,certificateid, true);
+     emit certificateIssued(studentname, course, certificateid, dateIssued);
+     
 
 } 
 
-function _generateCertificateId(string memory studentname, string  memory course) internal view returns(bytes32){
-    bytes32   certificateId = keccak256(abi.encodePacked(studentname , course , block.timestamp ));
-    return certificateId;
+///////////////////GETTER FUNCTION//////////////////////////
+function verifyCertificate(bytes32 certificateid) public view returns(bool){
+    
+    return  Certificates[certificateid].isValid;
+}
+
+function getCertificateById(bytes32 certificateid)  public view returns(Certificate memory){
+        return Certificates[certificateid];
+}
+
+
+/////////////////////INTARNAL FUNCTION/////////////////////////
+function _generateCertificateId(string memory studentname, string  memory course) public view returns(bytes32){
+    bytes32   certificateid = keccak256(abi.encodePacked(studentname , course , block.timestamp ));
+    return certificateid;
 }
 
        
