@@ -21,7 +21,7 @@ struct Certificate {
 
 mapping(bytes32 => Certificate) public Certificates;
 address public owner;
-bytes32[] public certificateId;
+mapping(string name => bytes32 certificateId) public certificateIdList;
 
 
 event certificateIssued(string strudentname, string course,bytes32 certificateId, uint dateissued);
@@ -39,6 +39,8 @@ constructor(){
 function issueCertificate(string memory studentname, string memory course , uint dateIssued  ) external onlyOwner()  {
      bytes32   certificateid = _generateCertificateId(studentname, course );
      Certificates[certificateid] = Certificate(studentname, course ,dateIssued,certificateid, true);
+     certificateIdList[studentname] = certificateid;
+
      emit certificateIssued(studentname, course, certificateid, dateIssued);
      
 

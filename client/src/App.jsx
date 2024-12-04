@@ -1,8 +1,22 @@
-import Navbar from "../components/Navbar";
-import "@rainbow-me/rainbowkit/styles.css";
-import "./index.css"; // Ensure this is imported before App.css
-import "./App.css";
+import { useContext, useState } from "react";
 
+import NavBar from "./components/navbar";
+import CreateCertificate from "./components/CreateCertificate";
+import { Toaster } from "react-hot-toast";
+import "@rainbow-me/rainbowkit/styles.css";
+
+import "./App.css";
+/* function App() {
+  return (
+    <>
+      <Toaster />
+      <NavBar />
+      <Stake />
+    </>
+  );
+}
+
+export default App; */
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import {
@@ -14,7 +28,6 @@ import {
   hardhat,
 } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { Home } from "../components/Home";
 
 const config = getDefaultConfig({
   appName: "certificate-verification-systme",
@@ -29,10 +42,9 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <div>
-            <Home />
-            <Navbar />
-          </div>
+          <Toaster />
+          <NavBar />
+          <CreateCertificate />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

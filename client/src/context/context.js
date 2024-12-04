@@ -102,16 +102,16 @@ export const contractABI = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
     ],
-    name: "certificateId",
+    name: "certificateIdList",
     outputs: [
       {
         internalType: "bytes32",
-        name: "",
+        name: "certificateId",
         type: "bytes32",
       },
     ],
