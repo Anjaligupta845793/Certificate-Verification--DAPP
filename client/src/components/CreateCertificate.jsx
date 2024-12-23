@@ -6,21 +6,27 @@ import {
   useWriteContract,
   useWatchContractEvent,
 } from "wagmi";
+import { toast } from "react-hot-toast";
+import { flareTestnet } from "viem/chains";
 
 const CreateCertificate = () => {
   const [studentName, setStudentName] = useState("");
   const [courseName, setCourseName] = useState("");
   const [issueDate, setIssueDate] = useState("");
+  const [isWatching, setisWatching] = useState(false);
   const account = useAccount();
   const { writeContract, status } = useWriteContract();
   useWatchContractEvent({
-    address,
-    contractABI,
+    address: address,
+    abi: contractABI,
     eventName: "certificateIssued",
+    enabled: isWatching,
     onLogs(logs) {
       logs.forEach((log) => {
         const { args } = log; // Destructure args from log
         console.log("Event Args:", args); // Log the event arguments
+        toast.success("Certificate is issued successfully ✅");
+        setisWatching(false);
       });
     },
     onError(error) {
@@ -34,16 +40,19 @@ const CreateCertificate = () => {
       console.log(account);
       console.log(studentName, courseName, issueDate);
       // Validate inputs
-      if (!studentName || !courseName || !issueDate) {
+      /*  if (!studentName || !courseName || !issueDate) {
         throw new Error("Invalid input: All parameters must be provided.");
-      }
+      } */
 
-      await writeContract({
-        contractABI,
-        address,
+      const response = await writeContract({
+        abi: contractABI,
+        address: address,
         functionName: "issueCertificate",
         args: [studentName, courseName, issueDate],
       });
+      const hash = response.hash;
+      console.log(hash);
+      setisWatching(true);
     } catch (error) {
       console.error("Error during transaction:", error.message || error);
     }
@@ -54,10 +63,9 @@ const CreateCertificate = () => {
     error: IdError,
     isLoading: certificateLoading,
   } = useReadContract({
-    contractABI,
-    address,
-    functionName: "certificateIdList",
-    args: ["anjali"],
+    abi: contractABI,
+    address: address,
+    functionName: "owner",
   });
 
   return (
